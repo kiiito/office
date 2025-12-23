@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.office.application.mapper.PurchaseApplicationMapper">
+    
+    <resultMap type="PurchaseApplication" id="PurchaseApplicationResult">
+        <result property="applicationId"    column="application_id"    />
+        <result property="applicationNo"    column="application_no"    />
+        <result property="applicantId"    column="applicant_id"    />
+        <result property="applyReason"    column="apply_reason"    />
+        <result property="applicationStatus"    column="application_status"    />
+        <result property="urgentLevel"    column="urgent_level"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="PurchaseApplicationPurchaseApplicationDetailResult" type="PurchaseApplication" extends="PurchaseApplicationResult">
+        <collection property="purchaseApplicationDetailList" ofType="PurchaseApplicationDetail" column="application_id" select="selectPurchaseApplicationDetailList" />
+    </resultMap>
+
+    <resultMap type="PurchaseApplicationDetail" id="PurchaseApplicationDetailResult">
+        <result property="detailId"    column="detail_id"    />
+        <result property="applicationId"    column="application_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="applyQuantity"    column="apply_quantity"    />
+        <result property="currentStock"    column="current_stock"    />
+        <result property="safetyStock"    column="safety_stock"    />
+        <result property="estimatedPrice"    column="estimated_price"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectPurchaseApplicationVo">
+        select application_id, application_no, applicant_id, apply_reason, application_status, urgent_level, create_time, update_time from purchase_application
+    </sql>
+
+    <select id="selectPurchaseApplicationList" parameterType="PurchaseApplication" resultMap="PurchaseApplicationResult">
+        <include refid="selectPurchaseApplicationVo"/>
+        <where>  
+            <if test="applicationNo != null  and applicationNo != ''"> and application_no = #{applicationNo}</if>
+            <if test="applicantId != null "> and applicant_id = #{applicantId}</if>
+            <if test="applicationStatus != null "> and application_status = #{applicationStatus}</if>
+        </where>
+        order by application_status
+    </select>
+    
+    <select id="selectPurchaseApplicationByApplicationId" parameterType="Long" resultMap="PurchaseApplicationPurchaseApplicationDetailResult">
+        select application_id, application_no, applicant_id, apply_reason, application_status, urgent_level, create_time, update_time
+        from purchase_application
+        where application_id = #{applicationId}
+    </select>
+
+    <select id="selectPurchaseApplicationDetailList" resultMap="PurchaseApplicationDetailResult">
+        select detail_id, application_id, product_id, apply_quantity, current_stock, safety_stock, estimated_price, remark, create_time
+        from purchase_application_detail
+        where application_id = #{application_id}
+    </select>
+
+    <insert id="insertPurchaseApplication" parameterType="PurchaseApplication" useGeneratedKeys="true" keyProperty="applicationId">
+        insert into purchase_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applicationNo != null and applicationNo != ''">application_no,</if>
+            <if test="applicantId != null">applicant_id,</if>
+            <if test="applyReason != null and applyReason != ''">apply_reason,</if>
+            <if test="applicationStatus != null">application_status,</if>
+            <if test="urgentLevel != null">urgent_level,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applicationNo != null and applicationNo != ''">#{applicationNo},</if>
+            <if test="applicantId != null">#{applicantId},</if>
+            <if test="applyReason != null and applyReason != ''">#{applyReason},</if>
+            <if test="applicationStatus != null">#{applicationStatus},</if>
+            <if test="urgentLevel != null">#{urgentLevel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseApplication" parameterType="PurchaseApplication">
+        update purchase_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applicationNo != null and applicationNo != ''">application_no = #{applicationNo},</if>
+            <if test="applicantId != null">applicant_id = #{applicantId},</if>
+            <if test="applyReason != null and applyReason != ''">apply_reason = #{applyReason},</if>
+            <if test="applicationStatus != null">application_status = #{applicationStatus},</if>
+            <if test="urgentLevel != null">urgent_level = #{urgentLevel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where application_id = #{applicationId}
+    </update>
+
+    <delete id="deletePurchaseApplicationByApplicationId" parameterType="Long">
+        delete from purchase_application where application_id = #{applicationId}
+    </delete>
+
+    <delete id="deletePurchaseApplicationByApplicationIds" parameterType="String">
+        delete from purchase_application where application_id in 
+        <foreach item="applicationId" collection="array" open="(" separator="," close=")">
+            #{applicationId}
+        </foreach>
+    </delete>
+    
+    <delete id="deletePurchaseApplicationDetailByApplicationIds" parameterType="String">
+        delete from purchase_application_detail where application_id in 
+        <foreach item="applicationId" collection="array" open="(" separator="," close=")">
+            #{applicationId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePurchaseApplicationDetailByApplicationId" parameterType="Long">
+        delete from purchase_application_detail where application_id = #{applicationId}
+    </delete>
+
+    <insert id="batchPurchaseApplicationDetail">
+        insert into purchase_application_detail( detail_id, application_id, product_id, apply_quantity, current_stock, safety_stock, estimated_price, remark, create_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.detailId}, #{item.applicationId}, #{item.productId}, #{item.applyQuantity}, #{item.currentStock}, #{item.safetyStock}, #{item.estimatedPrice}, #{item.remark}, #{item.createTime})
+        </foreach>
+    </insert>
+</mapper>

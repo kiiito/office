@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.office.report.mapper.DepartmentFinancialReportMapper">
+    
+    <resultMap type="DepartmentFinancialReport" id="DepartmentFinancialReportResult">
+        <result property="reportId"    column="report_id"    />
+        <result property="departmentId"    column="department_id"    />
+        <result property="departmentName"    column="department_name"    />
+        <result property="reportDate"    column="report_date"    />
+        <result property="totalOrders"    column="total_orders"    />
+        <result property="completedOrders"    column="completed_orders"    />
+        <result property="pendingOrders"    column="pending_orders"    />
+        <result property="totalAmount"    column="total_amount"    />
+        <result property="completedAmount"    column="completed_amount"    />
+        <result property="pendingAmount"    column="pending_amount"    />
+        <result property="goodsAmount"    column="goods_amount"    />
+        <result property="otherFeeAmount"    column="other_fee_amount"    />
+        <result property="mainOrderNos"    column="main_order_nos"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDepartmentFinancialReportVo">
+        select report_id, department_id, department_name, report_date, total_orders, completed_orders, pending_orders, total_amount, completed_amount, pending_amount, goods_amount, other_fee_amount, main_order_nos, create_time, update_time from department_financial_report
+    </sql>
+
+    <select id="selectDepartmentFinancialReportList" parameterType="DepartmentFinancialReport" resultMap="DepartmentFinancialReportResult">
+        <include refid="selectDepartmentFinancialReportVo"/>
+        <where>  
+            <if test="departmentId != null "> and department_id = #{departmentId}</if>
+            <if test="departmentName != null  and departmentName != ''"> and department_name like concat('%', #{departmentName}, '%')</if>
+            <if test="reportDate != null "> and report_date = #{reportDate}</if>
+            <if test="totalOrders != null "> and total_orders = #{totalOrders}</if>
+            <if test="completedOrders != null "> and completed_orders = #{completedOrders}</if>
+            <if test="pendingOrders != null "> and pending_orders = #{pendingOrders}</if>
+            <if test="totalAmount != null "> and total_amount = #{totalAmount}</if>
+            <if test="completedAmount != null "> and completed_amount = #{completedAmount}</if>
+            <if test="pendingAmount != null "> and pending_amount = #{pendingAmount}</if>
+            <if test="goodsAmount != null "> and goods_amount = #{goodsAmount}</if>
+            <if test="otherFeeAmount != null "> and other_fee_amount = #{otherFeeAmount}</if>
+            <if test="mainOrderNos != null  and mainOrderNos != ''"> and main_order_nos = #{mainOrderNos}</if>
+        </where>
+    </select>
+    
+    <select id="selectDepartmentFinancialReportByReportId" parameterType="Long" resultMap="DepartmentFinancialReportResult">
+        <include refid="selectDepartmentFinancialReportVo"/>
+        where report_id = #{reportId}
+    </select>
+    <select id="selectDepartmentFinancialReportByDepartmentId" resultMap="DepartmentFinancialReportResult">
+        <include refid="selectDepartmentFinancialReportVo"/>
+        where department_id = #{departmentId}
+    </select>
+
+    <insert id="insertDepartmentFinancialReport" parameterType="DepartmentFinancialReport" useGeneratedKeys="true" keyProperty="reportId">
+        insert into department_financial_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="departmentId != null">department_id,</if>
+            <if test="departmentName != null and departmentName != ''">department_name,</if>
+            <if test="reportDate != null">report_date,</if>
+            <if test="totalOrders != null">total_orders,</if>
+            <if test="completedOrders != null">completed_orders,</if>
+            <if test="pendingOrders != null">pending_orders,</if>
+            <if test="totalAmount != null">total_amount,</if>
+            <if test="completedAmount != null">completed_amount,</if>
+            <if test="pendingAmount != null">pending_amount,</if>
+            <if test="goodsAmount != null">goods_amount,</if>
+            <if test="otherFeeAmount != null">other_fee_amount,</if>
+            <if test="mainOrderNos != null">main_order_nos,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="departmentId != null">#{departmentId},</if>
+            <if test="departmentName != null and departmentName != ''">#{departmentName},</if>
+            <if test="reportDate != null">#{reportDate},</if>
+            <if test="totalOrders != null">#{totalOrders},</if>
+            <if test="completedOrders != null">#{completedOrders},</if>
+            <if test="pendingOrders != null">#{pendingOrders},</if>
+            <if test="totalAmount != null">#{totalAmount},</if>
+            <if test="completedAmount != null">#{completedAmount},</if>
+            <if test="pendingAmount != null">#{pendingAmount},</if>
+            <if test="goodsAmount != null">#{goodsAmount},</if>
+            <if test="otherFeeAmount != null">#{otherFeeAmount},</if>
+            <if test="mainOrderNos != null">#{mainOrderNos},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDepartmentFinancialReport" parameterType="DepartmentFinancialReport">
+        update department_financial_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            <if test="departmentName != null and departmentName != ''">department_name = #{departmentName},</if>
+            <if test="reportDate != null">report_date = #{reportDate},</if>
+            <if test="totalOrders != null">total_orders = #{totalOrders},</if>
+            <if test="completedOrders != null">completed_orders = #{completedOrders},</if>
+            <if test="pendingOrders != null">pending_orders = #{pendingOrders},</if>
+            <if test="totalAmount != null">total_amount = #{totalAmount},</if>
+            <if test="completedAmount != null">completed_amount = #{completedAmount},</if>
+            <if test="pendingAmount != null">pending_amount = #{pendingAmount},</if>
+            <if test="goodsAmount != null">goods_amount = #{goodsAmount},</if>
+            <if test="otherFeeAmount != null">other_fee_amount = #{otherFeeAmount},</if>
+            <if test="mainOrderNos != null">main_order_nos = #{mainOrderNos},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where report_id = #{reportId}
+    </update>
+
+    <delete id="deleteDepartmentFinancialReportByReportId" parameterType="Long">
+        delete from department_financial_report where report_id = #{reportId}
+    </delete>
+
+    <delete id="deleteDepartmentFinancialReportByReportIds" parameterType="String">
+        delete from department_financial_report where report_id in 
+        <foreach item="reportId" collection="array" open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </delete>
+</mapper>

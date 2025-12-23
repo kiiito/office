@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.office.inventory.mapper.ProductInventoryMapper">
+    
+    <resultMap type="ProductInventory" id="ProductInventoryResult">
+        <result property="inventoryId"    column="inventory_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productType"    column="product_type"    />
+        <result property="specification"    column="specification"    />
+        <result property="unit"    column="unit"    />
+        <result property="productImage"    column="product_image"    />
+        <result property="currentStock"    column="current_stock"    />
+        <result property="warehouseLocation"    column="warehouse_location"    />
+        <result property="lastCheckTime"    column="last_check_time"    />
+        <result property="stockStatus"    column="stock_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="safetyStock"    column="safety_stock"    />
+        <result property="referencePrice"    column="referencePrice"    />
+        <result property="preInStockQuantity"    column="pre_in_stock_quantity"    />
+    </resultMap>
+
+    <sql id="selectProductInventoryVo">
+        select inventory_id, product_id, product_name, product_type, specification, unit, product_image, current_stock, warehouse_location, last_check_time, stock_status, create_time, update_time,pre_in_stock_quantity,safety_stock,referencePrice from product_inventory
+    </sql>
+
+    <select id="selectProductInventoryList" parameterType="ProductInventory" resultMap="ProductInventoryResult">
+        <include refid="selectProductInventoryVo"/>
+        <where>  
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="currentStock != null "> and current_stock = #{currentStock}</if>
+            <if test="stockStatus != null  and stockStatus != ''"> and stock_status = #{stockStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectProductInventoryByInventoryId" parameterType="Long" resultMap="ProductInventoryResult">
+        <include refid="selectProductInventoryVo"/>
+        where inventory_id = #{inventoryId}
+    </select>
+    <select id="selectProductInventorySummaryList" resultType="com.office.inventory.domain.query.ProductQuery">
+        SELECT
+            i.product_name as productName,
+            i.current_stock as currentStock,
+            p.safety_stock as safetyStock
+        FROM
+            product_inventory i
+                INNER JOIN product p ON i.product_id = p.product_id
+    </select>
+    <select id="getInventoryByProductId" resultMap="ProductInventoryResult">
+        <include refid="selectProductInventoryVo"/>
+        where product_id = #{productId}
+    </select>
+
+    <insert id="insertProductInventory" parameterType="ProductInventory" useGeneratedKeys="true" keyProperty="inventoryId">
+        insert into product_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="productType != null and productType != ''">product_type,</if>
+            <if test="specification != null">specification,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="productImage != null">product_image,</if>
+            <if test="currentStock != null">current_stock,</if>
+            <if test="warehouseLocation != null">warehouse_location,</if>
+            <if test="lastCheckTime != null">last_check_time,</if>
+            <if test="stockStatus != null">stock_status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="safetyStock != null">safety_stock,</if>
+            <if test="referencePrice != null">referencePrice,</if>
+            <if test="preInStockQuantity != null">pre_in_stock_quantity,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="productType != null and productType != ''">#{productType},</if>
+            <if test="specification != null">#{specification},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="productImage != null">#{productImage},</if>
+            <if test="currentStock != null">#{currentStock},</if>
+            <if test="warehouseLocation != null">#{warehouseLocation},</if>
+            <if test="lastCheckTime != null">#{lastCheckTime},</if>
+            <if test="stockStatus != null">#{stockStatus},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="safetyStock != null">#{safetyStock},</if>
+            <if test="referencePrice != null">#{referencePrice},</if>
+            <if test="preInStockQuantity != null">#{preInStockQuantity},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProductInventory" parameterType="ProductInventory">
+        update product_inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="productType != null and productType != ''">product_type = #{productType},</if>
+            <if test="specification != null">specification = #{specification},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="productImage != null">product_image = #{productImage},</if>
+            <if test="currentStock != null">current_stock = #{currentStock},</if>
+            <if test="warehouseLocation != null">warehouse_location = #{warehouseLocation},</if>
+            <if test="lastCheckTime != null">last_check_time = #{lastCheckTime},</if>
+            <if test="stockStatus != null">stock_status = #{stockStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="safetyStock != null">safety_stock = #{safetyStock},</if>
+            <if test="referencePrice != null">referencePrice = #{referencePrice},</if>
+            <if test="preInStockQuantity != null">pre_in_stock_quantity = #{preInStockQuantity},</if>
+        </trim>
+        where inventory_id = #{inventoryId}
+    </update>
+    <update id="updateProductInventoryStatus">
+        UPDATE product_inventory
+        SET stock_status = #{stockStatus},
+            update_time = NOW()
+        WHERE product_name = #{productName}
+    </update>
+
+    <delete id="deleteProductInventoryByInventoryId" parameterType="Long">
+        delete from product_inventory where inventory_id = #{inventoryId}
+    </delete>
+
+    <delete id="deleteProductInventoryByInventoryIds" parameterType="String">
+        delete from product_inventory where inventory_id in 
+        <foreach item="inventoryId" collection="array" open="(" separator="," close=")">
+            #{inventoryId}
+        </foreach>
+    </delete>
+</mapper>

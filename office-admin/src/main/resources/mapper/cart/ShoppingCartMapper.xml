@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.office.cart.mapper.ShoppingCartMapper">
+    
+    <resultMap type="ShoppingCart" id="ShoppingCartResult">
+        <result property="cartId"    column="cart_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productImage"    column="product_image"    />
+        <result property="specification"    column="specification"    />
+        <result property="unit"    column="unit"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="estimatedPrice"    column="estimated_price"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="selected"    column="selected"    />
+        <result property="itemStatus"    column="item_status"    />
+        <result property="addTime"    column="add_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="productType"    column="product_type"    />
+    </resultMap>
+
+    <sql id="selectShoppingCartVo">
+        select cart_id, user_id, product_id, product_name, product_image, specification, unit, quantity, estimated_price, total_price, selected, item_status, add_time, update_time,product_type from shopping_cart
+    </sql>
+
+    <select id="selectShoppingCartList" parameterType="ShoppingCart" resultMap="ShoppingCartResult">
+        <include refid="selectShoppingCartVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectShoppingCartByCartId" parameterType="Long" resultMap="ShoppingCartResult">
+        <include refid="selectShoppingCartVo"/>
+        where cart_id = #{cartId}
+    </select>
+
+    <insert id="insertShoppingCart" parameterType="ShoppingCart" useGeneratedKeys="true" keyProperty="cartId">
+        insert into shopping_cart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="productImage != null">product_image,</if>
+            <if test="specification != null">specification,</if>
+            <if test="unit != null">unit,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="estimatedPrice != null">estimated_price,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="selected != null">selected,</if>
+            <if test="itemStatus != null">item_status,</if>
+            <if test="addTime != null">add_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="productType != null">product_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="productImage != null">#{productImage},</if>
+            <if test="specification != null">#{specification},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="estimatedPrice != null">#{estimatedPrice},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="selected != null">#{selected},</if>
+            <if test="itemStatus != null">#{itemStatus},</if>
+            <if test="addTime != null">#{addTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="productType != null">#{productType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateShoppingCart" parameterType="ShoppingCart">
+        update shopping_cart
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="productImage != null">product_image = #{productImage},</if>
+            <if test="specification != null">specification = #{specification},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="estimatedPrice != null">estimated_price = #{estimatedPrice},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="selected != null">selected = #{selected},</if>
+            <if test="itemStatus != null">item_status = #{itemStatus},</if>
+            <if test="addTime != null">add_time = #{addTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where cart_id = #{cartId}
+    </update>
+
+    <delete id="deleteShoppingCartByCartId" parameterType="Long">
+        delete from shopping_cart where cart_id = #{cartId}
+    </delete>
+
+    <delete id="deleteShoppingCartByCartIds" parameterType="String">
+        delete from shopping_cart where cart_id in 
+        <foreach item="cartId" collection="array" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </delete>
+</mapper>

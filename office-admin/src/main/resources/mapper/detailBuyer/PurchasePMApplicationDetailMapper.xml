@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.office.detailBuyer.mapper.PurchasePMApplicationDetailMapper">
+    
+    <resultMap type="PurchasePMApplicationDetail" id="PurchasePMApplicationDetailResult">
+        <result property="detailId"    column="detail_id"    />
+        <result property="applicationId"    column="application_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="applyQuantity"    column="apply_quantity"    />
+        <result property="currentStock"    column="current_stock"    />
+        <result property="safetyStock"    column="safety_stock"    />
+        <result property="estimatedPrice"    column="estimated_price"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="productName"    column="productName"    />
+    </resultMap>
+
+    <sql id="selectPurchasePMApplicationDetailVo">
+        select detail_id, application_id, product_id, apply_quantity, current_stock, safety_stock, estimated_price, remark, create_time from purchase_application_detail
+    </sql>
+
+    <select id="selectPurchasePMApplicationDetailList" parameterType="PurchasePMApplicationDetail" resultMap="PurchasePMApplicationDetailResult">
+        select p1.detail_id, p1.application_id, p1.product_id, p1.apply_quantity,
+               p1.current_stock , p1.safety_stock, p1.estimated_price, p1.remark,
+               p1.create_time ,p2.product_name as productName
+        from purchase_application_detail p1
+        left join  product p2  on p1.product_id = p2.product_id
+
+
+        <where>  
+            <if test="applicationId != null "> and p1.application_id = #{applicationId}</if>
+            <if test="productId != null "> and p1.product_id = #{productId}</if>
+            <if test="estimatedPrice != null "> and p1.estimated_price = #{estimatedPrice}</if>
+        </where>
+    </select>
+    
+    <select id="selectPurchasePMApplicationDetailByDetailId" parameterType="Long" resultMap="PurchasePMApplicationDetailResult">
+        <include refid="selectPurchasePMApplicationDetailVo"/>
+        where detail_id = #{detailId}
+    </select>
+
+    <insert id="insertPurchasePMApplicationDetail" parameterType="PurchasePMApplicationDetail" useGeneratedKeys="true" keyProperty="detailId">
+        insert into purchase_application_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applicationId != null">application_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="applyQuantity != null">apply_quantity,</if>
+            <if test="currentStock != null">current_stock,</if>
+            <if test="safetyStock != null">safety_stock,</if>
+            <if test="estimatedPrice != null">estimated_price,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applicationId != null">#{applicationId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="applyQuantity != null">#{applyQuantity},</if>
+            <if test="currentStock != null">#{currentStock},</if>
+            <if test="safetyStock != null">#{safetyStock},</if>
+            <if test="estimatedPrice != null">#{estimatedPrice},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchasePMApplicationDetail" parameterType="PurchasePMApplicationDetail">
+        update purchase_application_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applicationId != null">application_id = #{applicationId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="applyQuantity != null">apply_quantity = #{applyQuantity},</if>
+            <if test="currentStock != null">current_stock = #{currentStock},</if>
+            <if test="safetyStock != null">safety_stock = #{safetyStock},</if>
+            <if test="estimatedPrice != null">estimated_price = #{estimatedPrice},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where detail_id = #{detailId}
+    </update>
+
+    <delete id="deletePurchasePMApplicationDetailByDetailId" parameterType="Long">
+        delete from purchase_application_detail where detail_id = #{detailId}
+    </delete>
+
+    <delete id="deletePurchasePMApplicationDetailByDetailIds" parameterType="String">
+        delete from purchase_application_detail where detail_id in 
+        <foreach item="detailId" collection="array" open="(" separator="," close=")">
+            #{detailId}
+        </foreach>
+    </delete>
+</mapper>
